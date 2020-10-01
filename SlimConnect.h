@@ -5,16 +5,29 @@
 #include <string>
 #include <functional>
 #include <iostream>
+#include <vector>
 #include "SimConnect.h"
 
 class EventHandler
 {
+private:
+	std::vector<std::function<void()>> callbacks;
 public:
 	SIMCONNECT_CLIENT_EVENT_ID id;
-	std::function<void()> callback;
 	EventHandler() {}
-	EventHandler(SIMCONNECT_CLIENT_EVENT_ID id, const std::function<void()>& callback)
-		: id(id), callback(callback) {}
+
+	void add(const std::function<void()>& callback)
+	{
+		callbacks.push_back(callback);
+	}
+
+	void call() const
+	{
+		for (const auto& callback : callbacks)
+		{
+			callback();
+		}
+	}
 };
 
 class EventIdStore
@@ -76,14 +89,15 @@ public:
 	{
 		ensureResourceIsFree(eventName);
 		SIMCONNECT_CLIENT_EVENT_ID id = events.size();
-		events[eventName] = EventHandler(id, callback);
+		events[eventName].id = id;
+		events[eventName].add(callback);
 		eventIdToName[id] = eventName;
 		return id;
 	}
 
 	void call(const std::string& eventName) const
 	{
-		events.find(eventName)->second.callback();
+		events.find(eventName)->second.call();
 	}
 
 	void call(const SIMCONNECT_CLIENT_EVENT_ID eventId) const
@@ -119,29 +133,29 @@ private:
 	{
 		switch (pData->dwID)
 		{
-		case SIMCONNECT_RECV_ID_SIMOBJECT_DATA:
-		{
-			//SIMCONNECT_RECV_SIMOBJECT_DATA* pObjData = (SIMCONNECT_RECV_SIMOBJECT_DATA*)pData;
+			case SIMCONNECT_RECV_ID_SIMOBJECT_DATA:
+			{
+				//SIMCONNECT_RECV_SIMOBJECT_DATA* pObjData = (SIMCONNECT_RECV_SIMOBJECT_DATA*)pData;
 
-			// pObjData->dwRequestID
-			// Got requested data
-			break;
-		}
-		case SIMCONNECT_RECV_ID_EVENT:
-		{
-			SIMCONNECT_RECV_EVENT* event = (SIMCONNECT_RECV_EVENT*)pData;
-			self->eventListenerStore.call(event->uEventID);
-			break;
-		}
-		case SIMCONNECT_RECV_ID_QUIT:
-		{
-			self->quit = true;
-			break;
-		}
-		default:
-		{
-			break;
-		}
+				// pObjData->dwRequestID
+				// Got requested data
+				break;
+			}
+			case SIMCONNECT_RECV_ID_EVENT:
+			{
+				SIMCONNECT_RECV_EVENT* event = (SIMCONNECT_RECV_EVENT*)pData;
+				self->eventListenerStore.call(event->uEventID);
+				break;
+			}
+			case SIMCONNECT_RECV_ID_QUIT:
+			{
+				self->quit = true;
+				break;
+			}
+			default:
+			{
+				break;
+			}
 		}
 	}
 
