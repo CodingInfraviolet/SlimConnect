@@ -7,12 +7,8 @@
 //				Press Z to decrease the throttle
 //------------------------------------------------------------------------------
 
-#include <windows.h>
 #include <tchar.h>
-#include <stdio.h>
-#include <strsafe.h>
 #include <iostream>
-#include "SimConnect.h"
 #include "SlimConnect.h"
 
 /*
