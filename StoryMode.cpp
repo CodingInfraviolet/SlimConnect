@@ -114,6 +114,7 @@ void testStoryMode()
 
 	slimConnect.subscribeToSystemEvent("SimStart", []() { std::cout << "Sim started!\n" ; });
 	slimConnect.createKeyInputEvent("PressedZ", "z", []() { std::cout << "z was pressed!\n"; });
+	slimConnect.subscribeToObjectData("GENERAL ENG THROTTLE LEVER POSITION:1", Unit(Unit::Type::Percent), []() { std::cout << "Got data!\n"; });
 
 	while (!slimConnect.shouldQuit())
 	{
