@@ -30,6 +30,7 @@
     <ClInclude Include="EventHandler.h" />
     <ClInclude Include="EventIdStore.h" />
     <ClInclude Include="EventListenerStore.h" />
+    <ClInclude Include="SimArguments.h" />
     <ClInclude Include="SlimConnect.h" />
     <ClInclude Include="Unit.h" />
   </ItemGroup>

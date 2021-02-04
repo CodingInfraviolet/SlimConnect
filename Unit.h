@@ -1,5 +1,13 @@
 #pragma once
 #include <string>
+#include <windows.h>
+#include "SimConnect.h"
+struct TypeInfo {
+	const char* name;
+	const SIMCONNECT_DATATYPE type;
+
+	TypeInfo(const char* name, SIMCONNECT_DATATYPE type) : name(name), type(type) {}
+};
 
 class Unit
 {
@@ -135,285 +143,290 @@ public:
 		Flags,
 		String,
 		PerRadian,
-		PerDegree
+		PerDegree,
+		Feet
 	};
 private:
-	const std::string unitString;
+	const TypeInfo typeInfo;
 
-	std::string typeToString(Type type) const
+	TypeInfo getTypeInfo(Type type) const
 	{
 		switch (type)
 		{
 		case Type::Meter:
-			return "meter";
+			return TypeInfo("meter", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Centimeter:
-			return "centimeter";
+			return TypeInfo("centimeter", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Kilometer:
-			return "kilometer";
+			return TypeInfo("kilometer", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Millimeter:
-			return "millimeter";
+			return TypeInfo("millimeter", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Mile:
-			return "mile";
+			return TypeInfo("mile", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Decimile:
-			return "decimile";
+			return TypeInfo("decimile", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::NauticalMile:
-			return "nautical mile";
+			return TypeInfo("nautical mile", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Decinmile:
-			return "decinmile";
+			return TypeInfo("decinmile", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Foot:
-			return "foot";
+			return TypeInfo("foot", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Inch:
-			return "inch";
+			return TypeInfo("inch", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Yard:
-			return "yard";
+			return TypeInfo("yard", SIMCONNECT_DATATYPE_FLOAT64);
+		case Type::Feet:
+			return TypeInfo("feet", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::SquareInch:
-			return "square inch";
+			return TypeInfo("square inch", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::SquareFeet:
-			return "square feet";
+			return TypeInfo("square feet", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::SquareYard:
-			return "square yard";
+			return TypeInfo("square yard", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::SquareMeter:
-			return "square meter";
+			return TypeInfo("square meter", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::SquareCentimeter:
-			return "square centimeter";
+			return TypeInfo("square centimeter", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::SquareKilometer:
-			return "square kilometer";
+			return TypeInfo("square kilometer", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::SquareMillimeter:
-			return "square millimeter";
+			return TypeInfo("square millimeter", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::SquareMile:
-			return "square mile";
+			return TypeInfo("square mile", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::CubicInch:
-			return "cubic inch";
+			return TypeInfo("cubic inch", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::CubicFoot:
-			return "cubic foot";
+			return TypeInfo("cubic foot", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::CubicYard:
-			return "cubic yard";
+			return TypeInfo("cubic yard", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::CubicMile:
-			return "cubic mile";
+			return TypeInfo("cubic mile", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::CubicMillimeter:
-			return "cubic millimeter";
+			return TypeInfo("cubic millimeter", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::CubicCentimeter:
-			return "cubic centimeter";
+			return TypeInfo("cubic centimeter", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::MeterCubed:
-			return "meter cubed";
+			return TypeInfo("meter cubed", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::CubicKilometer:
-			return "cubic kilometer";
+			return TypeInfo("cubic kilometer", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Liter:
-			return "liter";
+			return TypeInfo("liter", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Gallon:
-			return "gallon";
+			return TypeInfo("gallon", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Quart:
-			return "quart";
+			return TypeInfo("quart", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Kelvin:
-			return "kelvin";
+			return TypeInfo("kelvin", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Rankine:
-			return "rankine";
+			return TypeInfo("rankine", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Farenheit:
-			return "farenheit";
+			return TypeInfo("farenheit", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Celsius:
-			return "celsius";
+			return TypeInfo("celsius", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Radian:
-			return "radian";
+			return TypeInfo("radian", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Round:
-			return "round";
+			return TypeInfo("round", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Degree:
-			return "degree";
+			return TypeInfo("degree", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::DegreeLatitude:
-			return "degree latitude";
+			return TypeInfo("degree latitude", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::DegreeLongitude:
-			return "degree longitude";
+			return TypeInfo("degree longitude", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Grad:
-			return "grad";
+			return TypeInfo("grad", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::MeterLatitude:
-			return "meter latitude";
+			return TypeInfo("meter latitude", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::RadianPerSecond:
-			return "radian per second";
+			return TypeInfo("radian per second", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::RevolutionPerMinute:
-			return "revolution per minute";
+			return TypeInfo("revolution per minute", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::MinutePerRound:
-			return "minute per round";
+			return TypeInfo("minute per round", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::NiceMinutePerRound:
-			return "nice minute per round";
+			return TypeInfo("nice minute per round", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::DegreePerSecond:
-			return "degree per second";
+			return TypeInfo("degree per second", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::MeterPerSecond:
-			return "meter per second";
+			return TypeInfo("meter per second", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::MeterPerMinute:
-			return "meter per minute";
+			return TypeInfo("meter per minute", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::FeetPerSecond:
-			return "feet/second";
+			return TypeInfo("feet/second", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::FeetPerMinute:
-			return "feet/minute";
+			return TypeInfo("feet/minute", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::KilometerPerhour:
-			return "kilometer/hour";
+			return TypeInfo("kilometer/hour", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Knot:
-			return "knot";
+			return TypeInfo("knot", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::MilePerHour:
-			return "mile per hour";
+			return TypeInfo("mile per hour", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Mach:
-			return "mach";
+			return TypeInfo("mach", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::MeterPerSecondSquaredMetersPerSecondSquared:
-			return "meter per second squared meters per second squared";
+			return TypeInfo("meters per second squared", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Gforce:
-			return "Gforce";
+			return TypeInfo("Gforce", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::FeetPerSecondSquared:
-			return "feet per second squared";
+			return TypeInfo("feet per second squared", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Second:
-			return "second";
+			return TypeInfo("second", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Minute:
-			return "minute";
+			return TypeInfo("minute", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Hour:
-			return "hour";
+			return TypeInfo("hour", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Day:
-			return "day";
+			return TypeInfo("day", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::HourOver10:
-			return "hour over 10";
+			return TypeInfo("hour over 10", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Year:
-			return "year";
+			return TypeInfo("year", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Watt:
-			return "Watt";
+			return TypeInfo("Watt", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::FtLbPerSecond:
-			return "ft lb per second";
+			return TypeInfo("ft lb per second", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::VolumeRate:
-			return "Volume rate";
+			return TypeInfo("Volume rate", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Details:
-			return "Details";
+			return TypeInfo("Details", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::MeterCubedPerSecond:
-			return "meter cubed per second";
+			return TypeInfo("meter cubed per second", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::GallonPerHour:
-			return "gallon per hour";
+			return TypeInfo("gallon per hour", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::LiterPerHour:
-			return "liter per hour";
+			return TypeInfo("liter per hour", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Kilogram:
-			return "kilogram";
+			return TypeInfo("kilogram", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Slug:
-			return "slug";
+			return TypeInfo("slug", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Pound:
-			return "pound";
+			return TypeInfo("pound", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::KilogramPerSecond:
-			return "kilogram per second";
+			return TypeInfo("kilogram per second", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::PoundPerHour:
-			return "pound per hour";
+			return TypeInfo("pound per hour", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Ampere:
-			return "ampere";
+			return TypeInfo("ampere", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Volt:
-			return "volt";
+			return TypeInfo("volt", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Hertz:
-			return "Hertz";
+			return TypeInfo("Hertz", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Kilohertz:
-			return "Kilohertz";
+			return TypeInfo("Kilohertz", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Megahertz:
-			return "Megahertz";
+			return TypeInfo("Megahertz", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::FrequencyBCD32:
-			return "Frequency BCD32";
+			return TypeInfo("Frequency BCD32", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::FrequencyBCD16:
-			return "Frequency BCD16";
+			return TypeInfo("Frequency BCD16", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::FrequencyADFBCD32:
-			return "Frequency ADF BCD32";
+			return TypeInfo("Frequency ADF BCD32", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::KilogramPerCubicMeter:
-			return "kilogram per cubic meter";
+			return TypeInfo("kilogram per cubic meter", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::SlugPerCubicFeet:
-			return "Slug per cubic feet";
+			return TypeInfo("Slug per cubic feet", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::PoundPerGallon:
-			return "pound per gallon";
+			return TypeInfo("pound per gallon", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Pascal:
-			return "pascal";
+			return TypeInfo("pascal", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::NewtonPerSquareMeter:
-			return "Newton per square meter";
+			return TypeInfo("Newton per square meter", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Kilopascal:
-			return "kilopascal";
+			return TypeInfo("kilopascal", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::KilogramForcePerSquareCentimeter:
-			return "kilogram force per square centimeter";
+			return TypeInfo("kilogram force per square centimeter", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::MillimeterOfMercury:
-			return "millimeter of mercury";
+			return TypeInfo("millimeter of mercury", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::CentimeterOfMercury:
-			return "centimeter of mercury";
+			return TypeInfo("centimeter of mercury", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::InchOfMercury:
-			return "inch of mercury";
+			return TypeInfo("inch of mercury", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Atmosphere:
-			return "atmosphere";
+			return TypeInfo("atmosphere", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::MillimeterOfWater:
-			return "millimeter of water";
+			return TypeInfo("millimeter of water", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::PoundForcePerSquareInch:
-			return "pound-force per square inch";
+			return TypeInfo("pound-force per square inch", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::PoundForcePerSquareFoot:
-			return "pound-force per square foot";
+			return TypeInfo("pound-force per square foot", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Bar:
-			return "bar";
+			return TypeInfo("bar", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Millibar:
-			return "millibar";
+			return TypeInfo("millibar", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::BoostCmHg:
-			return "boost cmHg";
+			return TypeInfo("boost cmHg", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::BoostInHg:
-			return "boost inHg";
+			return TypeInfo("boost inHg", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::BoostPsi:
-			return "boost psi";
+			return TypeInfo("boost psi", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::SlugFeetSquared:
-			return "slug feet squared";
+			return TypeInfo("slug feet squared", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::KilogramMeterSquared:
-			return "kilogram meter squared";
+			return TypeInfo("kilogram meter squared", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::NewtonMeter:
-			return "Newton meter";
+			return TypeInfo("Newton meter", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::FootPound:
-			return "foot-pound";
+			return TypeInfo("foot-pound", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::LbfFeet:
-			return "lbf-feet";
+			return TypeInfo("lbf-feet", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::KilogramMeter:
-			return "kilogram meter";
+			return TypeInfo("kilogram meter", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::PoundalFeet:
-			return "poundal feet";
+			return TypeInfo("poundal feet", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Part:
-			return "part";
+			return TypeInfo("part", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Half:
-			return "half";
+			return TypeInfo("half", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Third:
-			return "third";
+			return TypeInfo("third", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Percent:
-			return "percent";
+			return TypeInfo("percent", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::PercentOver100:
-			return "percent over 100";
+			return TypeInfo("percent over 100", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Bel:
-			return "bel";
+			return TypeInfo("bel", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Decibel:
-			return "decibel";
+			return TypeInfo("decibel", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::MoreThanAHalf:
-			return "more_than_a_half";
+			return TypeInfo("more_than_a_half", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Times:
-			return "times";
+			return TypeInfo("times", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Ratio:
-			return "ratio";
+			return TypeInfo("ratio", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Number:
-			return "number";
+			return TypeInfo("number", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Scaler:
-			return "scaler";
+			return TypeInfo("scaler", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Position:
-			return "position";
+			return TypeInfo("position", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Enum:
-			return "Enum";
+			return TypeInfo("Enum", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Bool:
-			return "Bool";
+			return TypeInfo("Bool", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Bco16:
-			return "Bco16";
+			return TypeInfo("Bco16", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Mask:
-			return "mask";
+			return TypeInfo("mask", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::Flags:
-			return "flags";
+			return TypeInfo("flags", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::String:
-			return "string";
+			return TypeInfo("string", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::PerRadian:
-			return "per radian";
+			return TypeInfo("per radian", SIMCONNECT_DATATYPE_FLOAT64);
 		case Type::PerDegree:
-			return "per degree";
+			return TypeInfo("per degree", SIMCONNECT_DATATYPE_FLOAT64);
 		}
 	}
 public:
 
-	Unit(Type type) : unitString(typeToString(type)) {}
+	Unit(Type type) : typeInfo(getTypeInfo(type)) {}
 
-	static constexpr const char* STRING = "some useful string constant";
-
-	operator const char* () const
+	const char* name() const
 	{
-		return unitString.c_str();
+		return typeInfo.name;
+	}
+
+	const SIMCONNECT_DATATYPE type() const {
+		return typeInfo.type;
 	}
 };

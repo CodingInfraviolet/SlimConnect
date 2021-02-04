@@ -10,11 +10,14 @@
 #include "EventIdStore.h"
 #include "EventListenerStore.h"
 #include "Unit.h"
+#include "SimArguments.h"
 
 struct ThrottleControlData
 {
 	double percent;
 };
+
+
 
 class SlimConnect
 {
@@ -24,8 +27,9 @@ private:
 	HANDLE  hSimConnect = nullptr;
 	HRESULT hr = 0;
 	bool quit = false;
-	EventListenerStore<void()> eventListenerStore;
+	EventListenerStore<void(const SimArguments*)> eventHandlerStore;
 	EventListenerStore<void()> dataDefinitionStore;
+	EventListenerStore<void()> keyEventListenerStore;
 
 	enum class InputGroups {
 		Default,
@@ -42,14 +46,16 @@ private:
 		case SIMCONNECT_RECV_ID_SIMOBJECT_DATA:
 		{
 			SIMCONNECT_RECV_SIMOBJECT_DATA* pObjData = (SIMCONNECT_RECV_SIMOBJECT_DATA*)pData;
-			self->eventListenerStore.call(pObjData->dwRequestID);
+			SimArguments arguments;
+			arguments.objectData = pObjData;
+			self->eventHandlerStore.call(pObjData->dwRequestID, &arguments);
 			break;
 		}
 		case SIMCONNECT_RECV_ID_EVENT:
 		{
 			SIMCONNECT_RECV_EVENT* event = (SIMCONNECT_RECV_EVENT*)pData;
 			ThrottleControlData* data = (ThrottleControlData*)event->dwData;
-			self->eventListenerStore.call(event->uEventID);
+			self->eventHandlerStore.call(event->uEventID, nullptr);
 			break;
 		}
 		case SIMCONNECT_RECV_ID_QUIT:
@@ -100,29 +106,29 @@ public:
 		SimConnect_Close(hSimConnect);
 	}
 
-	SlimConnect& subscribeToSystemEvent(const std::string& eventName, const std::function<void()>& callback)
+	SlimConnect& subscribeToSystemEvent(const std::string& eventName, const std::function<void(const SimArguments*)>& callback)
 	{
-		eventListenerStore.add(eventName, callback);
-		hr = SimConnect_SubscribeToSystemEvent(hSimConnect, eventListenerStore.getId(eventName), "SimStart");
+		auto id = eventHandlerStore.add(eventName, callback);
+		hr = SimConnect_SubscribeToSystemEvent(hSimConnect, id, "SimStart");
 		return *this;
 	}
 
-	void subscribeToObjectData(const std::string& requestedData, const Unit unit, const std::function<void()>& callback)
+	void subscribeToObjectData(const std::string& requestedData, const Unit unit, const std::function<void(const SimArguments*)>& callback)
 	{
 		int dataDefinition = dataDefinitionStore.add(requestedData, []() {});
-		int requestEvent = eventListenerStore.add(requestedData, callback);
-		hr = SimConnect_AddToDataDefinition(hSimConnect, dataDefinition, requestedData.c_str(), static_cast<const char*>(unit));
+		int requestEvent = eventHandlerStore.add(requestedData, callback);
+		hr = SimConnect_AddToDataDefinition(hSimConnect, dataDefinition, requestedData.c_str(), unit.name(), unit.type());
 		hr = SimConnect_RequestDataOnSimObject(hSimConnect, requestEvent, dataDefinition, SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD_SIM_FRAME);
 	}
 
-	void createKeyInputEvent(const std::string& eventName, const std::string& key, const std::function<void()>& onKeyDown)
+	void createKeyInputEvent(const std::string& eventName, const std::string& key, const std::function<void(const SimArguments*)>& onKeyDown)
 	{
-		int event = eventListenerStore.add(eventName, onKeyDown);
+		int event = eventHandlerStore.add(eventName, onKeyDown);
 		hr = SimConnect_MapClientEventToSimEvent(hSimConnect, event);
 		hr = SimConnect_AddClientEventToNotificationGroup(hSimConnect, static_cast<int>(KeyGroups::Default), event);
 		hr = SimConnect_MapInputEventToClientEvent(hSimConnect, static_cast<int>(InputGroups::Default), key.c_str(), event);
 		hr = SimConnect_SetInputGroupState(hSimConnect, static_cast<int>(InputGroups::Default), SIMCONNECT_STATE_ON);
-		//hr = SimConnect_SetNotificationGroupPriority(hSimConnect, static_cast<int>(KeyGroups::Default), SIMCONNECT_GROUP_PRIORITY_HIGHEST);
+		hr = SimConnect_SetNotificationGroupPriority(hSimConnect, static_cast<int>(KeyGroups::Default), SIMCONNECT_GROUP_PRIORITY_HIGHEST);
 	}
 
 	bool shouldQuit() const

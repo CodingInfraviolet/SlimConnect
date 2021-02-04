@@ -5,6 +5,7 @@
 #include <iostream>
 #include "SimConnect.h"
 #include "EventHandler.h"
+#include "SimArguments.h"
 
 template <class FN>
 class EventListenerStore
@@ -37,14 +38,14 @@ public:
 		return id;
 	}
 
-	void call(const std::string& eventName) const
+	void call(const std::string& eventName, const SimArguments* data) const
 	{
-		events.find(eventName)->second.call();
+		events.find(eventName)->second.call(data);
 	}
 
-	void call(const SIMCONNECT_CLIENT_EVENT_ID eventId) const
+	void call(const SIMCONNECT_CLIENT_EVENT_ID eventId, const SimArguments* data) const
 	{
-		call(eventNameFromId(eventId));
+		call(eventNameFromId(eventId), data);
 	}
 
 	SIMCONNECT_CLIENT_EVENT_ID getId(const std::string& eventName) const

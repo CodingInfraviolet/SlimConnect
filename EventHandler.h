@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <functional>
 #include "SimConnect.h"
+#include "SimArguments.h"
 
 template <class FN>
 class EventHandler
@@ -13,16 +14,16 @@ public:
 	SIMCONNECT_CLIENT_EVENT_ID id;
 	EventHandler() {}
 
-	void add(const std::function<void()>& callback)
+	void add(const std::function<FN>& callback)
 	{
 		callbacks.push_back(callback);
 	}
 
-	void call() const
+	void call(const SimArguments* arguments) const
 	{
 		for (const auto& callback : callbacks)
 		{
-			callback();
+			callback(arguments);
 		}
 	}
 };
